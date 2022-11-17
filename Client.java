@@ -66,9 +66,9 @@ public class Client {
                 System.out.print("1.Copy\n2.Zero Copy\nSelect type to copy : ");
                 String type = sc.next();
                 if (!type.equals("1") && !type.equals("2")) {
-                    showFile();
                     namefile="";
                     check=false;
+                    System.out.println("์Not Select type to copy");
                     break;
                 }
                 
@@ -77,14 +77,10 @@ public class Client {
                 long size = dis.readLong();
                 String filePathcopy = foldercopy + namefile;
                 String filePathzero = folderzero + namefile;
-                //long start = System.currentTimeMillis();
                 if(type.equals("1"))
                     copy(filePathcopy, size);
                 else
                     zeroCopy(filePathzero, size);
-                //long end = System.currentTimeMillis();
-                //long time = end-start;
-                //dos.writeLong(time);
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input\n");

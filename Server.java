@@ -78,7 +78,7 @@ public class Server {
                     File file = new File(filePath);
                     for (int i = 0; i < listOfFiles.length; ++i) {
                         if (namefile.equalsIgnoreCase(filename[i])) {
-                            System.out.println("[ SERVER ] Send File: " + namefile);
+                            System.out.println("[ SERVER ] Send File List ");
                             check = true;      
                         }     
                     }dos.writeBoolean(check);
@@ -87,11 +87,17 @@ public class Server {
                     String type = dis.readUTF();
                     long size = file.length();
                     dos.writeLong(size);
-                    System.out.println("[ Client " + clientNo + " ] Select File name:  "+ namefile +(!type.equals("1") ? "  : zero " : "")+"  : copy file " );
+                    System.out.print("[ Client " + clientNo + " ] Select File name: "+ namefile);
+                    if(type.equals("1")){
+                        System.out.println(" : copy file");
+                    }else if(type.equals("2")){
+                        System.out.println(" : zero copy file");
+                    }
+                    
                     if(type.equals("1")){
                         copy(filePath, size,namefile);
                     }
-                    else{
+                    else if(type.equals("2")){
                         zeroCopy(filePath, size,namefile);
                     }
                     long time=dis.readLong();
