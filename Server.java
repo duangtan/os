@@ -67,8 +67,6 @@ public class Server {
             
         }
 
-     
-
         @Override
         public void run() {
             sendList();  
@@ -89,7 +87,7 @@ public class Server {
                     String type = dis.readUTF();
                     long size = file.length();
                     dos.writeLong(size);
-                    System.out.println("[ Client " + clientNo + " ] Select File name:  "+ namefile +(!type.equals("1") ? "  zero " : "")+"  copy file : " );
+                    System.out.println("[ Client " + clientNo + " ] Select File name:  "+ namefile +(!type.equals("1") ? "  : zero " : "")+"  : copy file " );
                     if(type.equals("1")){
                         copy(filePath, size,namefile);
                     }
@@ -115,7 +113,7 @@ public class Server {
                     dos.write(buffer, 0, read);
                     currentRead += read;
                 }
-                System.out.println("[ SERVER ] Send File:  " + namefile + " Successful!!");
+                System.out.println("[ SERVER ] Send File:  " + namefile +" : copy file "+ " Successful!!");
             } 
             catch (IOException e) {} 
             finally {
@@ -137,10 +135,8 @@ public class Server {
                 long read;
                 while(currentRead < size && (read = source.transferTo(currentRead, size - currentRead, socketChannel)) != -1){
                     currentRead += read;
-                }
-                    
-                
-                System.out.println("[ SERVER ] Send File:  " + namefile + " Successful!!");
+                }               
+                System.out.println("[ SERVER ] Send File:  " + namefile +" : zero copy "+ " Successful!!");
             }
             catch (IOException e){}
             finally{
