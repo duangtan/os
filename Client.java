@@ -32,7 +32,6 @@ public class Client {
         System.out.println("|                                          |");
         try{
              int length = dis.readInt();
-             System.out.println(length);
             for (int i = 0; i < length; i++) {
                 filename[i]=dis.readUTF();
                 System.out.println("     File: " + filename[i]);
