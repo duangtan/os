@@ -11,12 +11,6 @@ public class Client {
     private final String foldercopy = "C:/os/client/copy/";  //<<<<<<<<<<<<<<<<<<<<<<<<
     private final String folderzero = "C:/os/client/zero/";  //<<<<<<<<<<<<<<<<<<<<<<<<
     String[] filename = new String[10000];
-    
-
-
-        
-        
-       
 
     public final void connection() {
         try {
@@ -27,8 +21,6 @@ public class Client {
         } catch (IOException e) {}
     }
 
-  
-    
     public final void showFile() {
         
         System.out.println(" __________________________________________");
