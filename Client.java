@@ -10,9 +10,8 @@ public class Client {
     private SocketChannel socketChannel;
     private final String foldercopy = "C:/os/client/copy/";  //<<<<<<<<<<<<<<<<<<<<<<<<
     private final String folderzero = "C:/os/client/zero/";  //<<<<<<<<<<<<<<<<<<<<<<<<
-    static File folderserver = new File("C:/os/server/"); //<<<<<<<<<<<<<<<<<<<<<<<<
-    File[] listOfFiles = folderserver.listFiles();
     String[] filename = new String[10000];
+    
 
 
         
@@ -37,41 +36,38 @@ public class Client {
         System.out.println("|             File in Server               |");
         System.out.println("|__________________________________________|");
         System.out.println("|                                          |");
+        try{
+             int length = dis.readInt();
+             System.out.println(length);
+            for (int i = 0; i < length; i++) {
+                filename[i]=dis.readUTF();
+                System.out.println("     File: " + filename[i]);
+            } 
+        }catch (IOException e) { }
         
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                System.out.println("     File: " + listOfFiles[i].getName());
-                filename[i] = listOfFiles[i].getName();
-            }
-        }
+        
         System.out.println("|                                          |");
         System.out.println("|__________________________________________|");
     }
 
     public final void askUser() {
-        
         String namefile = "";
-        boolean check = false;
+        boolean check;
         Scanner sc = new Scanner(System.in);
-        showFile();
+        
         while (true) {
+            showFile();
             System.out.print("[ CLEINT ] Select File: ");
             namefile = sc.next();
-            
             if(namefile.equalsIgnoreCase("EXIT")){
                 break;
             }
-            for (int i = 0; i < listOfFiles.length; ++i) {
-                if (namefile.equalsIgnoreCase(filename[i])) {
-                    
-                    System.out.println("[ SERVER ] Send File: " + namefile);
-                    check = true;  
-                }
-            }
             try {
+                dos.writeUTF(namefile);
+                check =dis.readBoolean();
                 if (check==false) {
-                    System.out.println("Not Found \n");
-                    continue;
+                    System.out.println("Not Found \n"); 
+                    break;
                 }
                 System.out.print("1.Copy\n2.Zero Copy\nSelect type to copy : ");
                 String type = sc.next();
@@ -82,7 +78,7 @@ public class Client {
                     continue;
                 }
                 
-                dos.writeUTF(namefile);
+                
                 dos.writeUTF(type);
                 long size = dis.readLong();
                 String filePathcopy = foldercopy + namefile;
@@ -96,9 +92,7 @@ public class Client {
                 long time = end-start;
                 dos.writeLong(time);
                 System.out.println("Time : "+time+" ms\n");
-                namefile="";
-                check=false;
-                showFile();
+                break;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input\n");
             } catch (IOException ex) {}
@@ -109,7 +103,7 @@ public class Client {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(filePath);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[8*1024];
             int read;
             long currentRead = 0;
             while (currentRead < size && (read = dis.read(buffer)) != -1) {

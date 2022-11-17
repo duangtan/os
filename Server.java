@@ -11,13 +11,11 @@ public class Server {
     public static int numclient;
     private ServerSocket serverSocket;
     private ServerSocketChannel serverChannel;
-    static File folder = new File("C:/os/server/");         //<<<<<<<<<<<<<<<<<<<<<<<<
-    private final File[] fileList = folder.listFiles();
+    static File folder = new File("C:/os/server/");   //<<<<<<<<<<<<<<<<<<<<<<<<
+    private final File[] listOfFiles = folder.listFiles();
+    String[] filename = new String[10000];
     
     
-
-    
-
     public final void connection(){
         try {
             serverSocket = new ServerSocket(5000);  //<<<<<<<<<<<<<<<<<<<<<<<<
@@ -39,8 +37,6 @@ public class Server {
         } catch (IOException e) {}
     }
 
-    
-
     class ClientHandle implements Runnable {
 
         private final int clientNo;
@@ -57,23 +53,43 @@ public class Server {
             this.clientNo = clientNo;
             
         }
+        void sendList(){
+            try{
+                dos.writeInt(listOfFiles.length);
+                for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    filename[i] = listOfFiles[i].getName();
+                    dos.writeUTF(filename[i] );
+                    dos.flush();;
+                }
+            } 
+            }catch (IOException e) { }
+            
+        }
 
      
 
         @Override
         public void run() {
-             
-           
+            sendList();  
             try {
+                boolean check = false;
                 while (true) {
                     String namefile = dis.readUTF();
-                    String type = dis.readUTF();
                     String filePath = "C:/os/server/"+namefile; //<<<<<<<<<<<<<<<<<<<<<<<<
                     File file = new File(filePath);
+                    for (int i = 0; i < listOfFiles.length; ++i) {
+                        if (namefile.equalsIgnoreCase(filename[i])) {
+                            System.out.println("[ SERVER ] Send File: " + namefile);
+                            check = true;      
+                        }     
+                    }dos.writeBoolean(check);
+                    dos.flush();
 
+                    String type = dis.readUTF();
                     long size = file.length();
                     dos.writeLong(size);
-                    System.out.println("Client " + clientNo + " Select File name:  "+(!type.equals("1") ? "zero " : "")+"copy file : " + namefile);
+                    System.out.println("[ Client " + clientNo + " ] Select File name:  "+ namefile +(!type.equals("1") ? "  zero " : "")+"  copy file : " );
                     if(type.equals("1")){
                         copy(filePath, size,namefile);
                     }
@@ -139,7 +155,7 @@ public class Server {
         }
         
         public void disconnect(){
-            System.out.println("[ SERVER ] Client: " + clientNo + " Disconnected!");
+            System.out.println("[ SERVER ] Client: " + clientNo + " Disconnected!\n");
             try{
                 if(dis != null)
                     dis.close();
