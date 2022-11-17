@@ -11,7 +11,7 @@ public class Client {
     private final String foldercopy = "C:/os/client/copy/";  //<<<<<<<<<<<<<<<<<<<<<<<<
     private final String folderzero = "C:/os/client/zero/";  //<<<<<<<<<<<<<<<<<<<<<<<<
     String[] filename = new String[10000];
-
+    
     public final void connection() {
         try {
             socket = new Socket("localhost", 5000);  //<<<<<<<<<<<<<<<<<<<<<<<<
@@ -21,6 +21,8 @@ public class Client {
         } catch (IOException e) {}
     }
 
+  
+    
     public final void showFile() {
         
         System.out.println(" __________________________________________");
@@ -67,7 +69,7 @@ public class Client {
                     showFile();
                     namefile="";
                     check=false;
-                    continue;
+                    break;
                 }
                 
                 
@@ -75,15 +77,14 @@ public class Client {
                 long size = dis.readLong();
                 String filePathcopy = foldercopy + namefile;
                 String filePathzero = folderzero + namefile;
-                long start = System.currentTimeMillis();
+                //long start = System.currentTimeMillis();
                 if(type.equals("1"))
                     copy(filePathcopy, size);
                 else
                     zeroCopy(filePathzero, size);
-                long end = System.currentTimeMillis();
-                long time = end-start;
-                dos.writeLong(time);
-                System.out.println("Time : "+time+" ms\n");
+                //long end = System.currentTimeMillis();
+                //long time = end-start;
+                //dos.writeLong(time);
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input\n");
@@ -94,6 +95,9 @@ public class Client {
     public void copy(String filePath, long size) {
         FileOutputStream fos = null;
         try {
+            long start = System.currentTimeMillis();
+                
+                
             fos = new FileOutputStream(filePath);
             byte[] buffer = new byte[8*1024];
             int read;
@@ -103,6 +107,10 @@ public class Client {
                 currentRead += read;
             }
             System.out.println("Copy Success");
+            long end = System.currentTimeMillis();
+            long time = end-start;
+            System.out.println("Time : "+time+" ms\n");
+            dos.writeLong(time);
         } catch (IOException e) { }
         finally {
             try {
@@ -117,12 +125,17 @@ public class Client {
     public final void zeroCopy(String filePath, long size){
         FileChannel destination = null;
         try{
+            long start = System.currentTimeMillis();
             destination = new FileOutputStream(filePath).getChannel();
             long currentRead = 0;
             long read;
             while(currentRead < size && (read = destination.transferFrom(socketChannel, currentRead, size - currentRead)) != -1)
                 currentRead += read;
             System.out.println("Zero Copy Success");
+            long end = System.currentTimeMillis();
+            long time = end-start;
+            System.out.println("Time : "+time+" ms\n");
+            dos.writeLong(time);
         } catch (IOException e){}
         finally{
             try{
